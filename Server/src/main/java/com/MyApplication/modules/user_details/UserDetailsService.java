@@ -1,16 +1,16 @@
 package com.MyApplication.modules.user_details;
 
 import com.MyApplication.interfaces.IService;
-import com.MyApplication.modules.user_details.entity.UserDetailsEntity;
+import com.MyApplication.modules.user_details.entity.UserDetails;
 
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
-public class UserDetailsService implements IService<UserDetailsEntity> {
+public class UserDetailsService implements IService<UserDetails> {
     @Override
-    public int create(UserDetailsEntity userDetailsEntity) {
+    public void create(UserDetails userDetailsEntity) {
         try {
             CallableStatement callableStatement =
                     connection.prepareCall("{call create_user_details(?,?,?,?,?)}");
@@ -22,12 +22,10 @@ public class UserDetailsService implements IService<UserDetailsEntity> {
             callableStatement.execute();
         } catch (SQLException exception){
             exception.getStackTrace();
-            return -1;
         }
-        return 0;
     }
-    public UserDetailsEntity findByEmail(String email){
-        UserDetailsEntity userDetailsEntity = null;
+    public UserDetails findByEmail(String email){
+        UserDetails userDetailsEntity = null;
         try {
             CallableStatement callableStatement =
                     connection.prepareCall("{CALL findUserDetailsByEmail(?,?,?,?,?,?)}");
@@ -38,7 +36,7 @@ public class UserDetailsService implements IService<UserDetailsEntity> {
             callableStatement.registerOutParameter(5, Types.VARCHAR);
             callableStatement.registerOutParameter(6, Types.VARCHAR);
             callableStatement.execute();
-            userDetailsEntity = new UserDetailsEntity(
+            userDetailsEntity = new UserDetails(
                     callableStatement.getInt(2),
                     callableStatement.getNString(3),
                     callableStatement.getNString(4),
@@ -52,23 +50,23 @@ public class UserDetailsService implements IService<UserDetailsEntity> {
         return userDetailsEntity;
     }
     @Override
-    public ArrayList<UserDetailsEntity> findAll() {
+    public ArrayList<UserDetails> findAll() {
         return null;
     }
 
     @Override
-    public int update(UserDetailsEntity userDetailsEntity) {
+    public int update(UserDetails userDetailsEntity) {
         return 0;
     }
 
     @Override
-    public int remove(UserDetailsEntity userDetailsEntity) {
+    public int remove(UserDetails userDetailsEntity) {
         return 0;
     }
 
     @Override
-    public UserDetailsEntity findById(int id) {
-        UserDetailsEntity userDetailsEntity = null;
+    public UserDetails findById(int id) {
+        UserDetails userDetailsEntity = null;
         try {
             CallableStatement callableStatement =
                     connection.prepareCall("{CALL findUserDetailsById(?,?,?,?,?,?)}");
@@ -79,7 +77,7 @@ public class UserDetailsService implements IService<UserDetailsEntity> {
             callableStatement.registerOutParameter(5, Types.VARCHAR);
             callableStatement.registerOutParameter(6, Types.VARCHAR);
             callableStatement.execute();
-            userDetailsEntity = new UserDetailsEntity(
+            userDetailsEntity = new UserDetails(
                     id,
                     callableStatement.getNString(2),
                     callableStatement.getNString(3),

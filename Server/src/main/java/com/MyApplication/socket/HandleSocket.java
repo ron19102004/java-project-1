@@ -39,7 +39,6 @@ public class HandleSocket implements Runnable{
             String request;
             while ((request = this.bufferedReader.readLine()) != null){
                 JSONObject resObj = new JSONObject(request);
-                System.out.println(resObj);
                 String action = resObj.getString("action");
                 JSONObject data = (JSONObject) resObj.get("data");
                 JSONObject response = this.socketController.handleAction(action,data);

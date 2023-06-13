@@ -2,9 +2,9 @@ package com.MyApplication.modules.user;
 
 import com.MyApplication.interfaces.IService;
 import com.MyApplication.modules.user.dto.CreateAccountDto;
-import com.MyApplication.modules.user.entity.UserEntity;
+import com.MyApplication.modules.user.entity.User;
 import com.MyApplication.modules.user_details.UserDetailsService;
-import com.MyApplication.modules.user_details.entity.UserDetailsEntity;
+import com.MyApplication.modules.user_details.entity.UserDetails;
 import com.MyApplication.utils.HandlePassword;
 
 import java.sql.CallableStatement;
@@ -12,10 +12,10 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
-public class UserService implements IService<UserEntity> {
+public class UserService implements IService<User> {
     private final UserDetailsService userDetailsService = new UserDetailsService();
     @Override
-    public int create(UserEntity userEntity) {
+    public void create(User userEntity) {
         try {
             CallableStatement callableStatement = connection.prepareCall("{call create_user(?,?,?)}");
             callableStatement.setInt(1,userEntity.getId_user_details());
@@ -24,13 +24,11 @@ public class UserService implements IService<UserEntity> {
             callableStatement.execute();
         } catch (SQLException e){
             e.getStackTrace();
-            return -1;
         }
-        return 0;
     }
     public void create_account(CreateAccountDto createAccountDto){
         try {
-            UserDetailsEntity userDetailsEntity = new UserDetailsEntity(
+            UserDetails userDetailsEntity = new UserDetails(
                     createAccountDto.getFirstName(),
                     createAccountDto.getLastName(),
                     createAccountDto.getEmail(),
@@ -40,7 +38,7 @@ public class UserService implements IService<UserEntity> {
             this.userDetailsService.create(userDetailsEntity);
             userDetailsEntity = this.userDetailsService.findByEmail(createAccountDto.getEmail());
             String password = HandlePassword.signIn(createAccountDto.getPassword());
-            UserEntity userEntity = new UserEntity(
+            User userEntity = new User(
                     userDetailsEntity.getId(),
                     createAccountDto.getUsername(),
                     password
@@ -50,8 +48,8 @@ public class UserService implements IService<UserEntity> {
             e.getStackTrace();
         }
     }
-    public UserEntity findByUsername(String username){
-        UserEntity userEntity = null;
+    public User findByUsername(String username){
+        User userEntity = null;
         try {
             CallableStatement callableStatement =
                     connection.prepareCall("{call findUserByUsername(?,?,?,?)}");
@@ -60,7 +58,7 @@ public class UserService implements IService<UserEntity> {
             callableStatement.registerOutParameter(3,Types.BIGINT);
             callableStatement.registerOutParameter(4,Types.VARCHAR);
             callableStatement.execute();
-            userEntity = new UserEntity(
+            userEntity = new User(
                     callableStatement.getInt(2),
                     callableStatement.getInt(3),
                     username,
@@ -72,22 +70,22 @@ public class UserService implements IService<UserEntity> {
         return userEntity;
     }
     @Override
-    public ArrayList<UserEntity> findAll() {
+    public ArrayList<User> findAll() {
         return null;
     }
 
     @Override
-    public int update(UserEntity userEntity) {
+    public int update(User userEntity) {
         return 0;
     }
 
     @Override
-    public int remove(UserEntity userEntity) {
+    public int remove(User userEntity) {
         return 0;
     }
 
     @Override
-    public UserEntity findById(int id) {
+    public User findById(int id) {
         return null;
     }
 
